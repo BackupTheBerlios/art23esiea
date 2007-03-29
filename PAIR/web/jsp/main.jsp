@@ -5,6 +5,7 @@
 <%@taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@taglib  uri="http://struts.apache.org/tags-logic" prefix="logic"%>
+
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/style.css"  media="screen">
@@ -18,11 +19,6 @@
     <DIV class="sikfSection">
     <DIV class="sikfSectionContenu">
 <!-- Début -->
-
-
-
-
-
 
  <!-- FIN -->
     <div id="sikfPieddePage">

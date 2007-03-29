@@ -19,7 +19,7 @@ var y=document.cafeverdef.humidity.value;
 </script>
 </head>    
 <body>
-    <%@include file="./leftMenu.jsp" %>
+    <%@include file="../leftMenu.jsp" %>
     <DIV id="sikfContenu">
     <DIV class="sikfSection">
     <DIV class="sikfSectionContenu">
@@ -29,10 +29,10 @@ var y=document.cafeverdef.humidity.value;
         
     <div class="menuOnglet">
       <span class="onglet-actif"><bean:message key="tab.greenCoffee"/></span>
-      <a class="onglet" href="<%=request.getContextPath()%>/jsp/tamano.jsp"><bean:message key="tab.size"/></a>
-      <a class="onglet" href="<%=request.getContextPath()%>/jsp/defectos.jsp"><bean:message key="tab.flaw"/></a>
-      <a class="onglet" href="<%=request.getContextPath()%>/jsp/catacion.jsp"><bean:message key="tab.tasting"/></a>
-      <a class="onglet" href="<%=request.getContextPath()%>/jsp/result.jsp"><bean:message key="tab.testResult"/></a>
+      <a class="onglet" href="<%=request.getContextPath()%>/jsp/access/tamano.jsp"><bean:message key="tab.size"/></a>
+      <a class="onglet" href="<%=request.getContextPath()%>/jsp/access/defectos.jsp"><bean:message key="tab.flaw"/></a>
+      <a class="onglet" href="<%=request.getContextPath()%>/jsp/access/catacion.jsp"><bean:message key="tab.tasting"/></a>
+      <a class="onglet" href="<%=request.getContextPath()%>/jsp/access/result.jsp"><bean:message key="tab.testResult"/></a>
     </div>
     
     <br />

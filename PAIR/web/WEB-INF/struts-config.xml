@@ -21,9 +21,10 @@
         <action path="/cafeVerdeAction" type="cafeverde.CafeVerdeAction" name="cafeverdef" scope="session" >
             <forward name="ok" path="/jsp/result.jsp" />
         </action>
-        <action input="/" name="displayForm" path="/display" scope="session" type="display.action.displayAction" attribute="display">
+        <action input="/display" name="displayForm" path="/display" scope="session" type="display.action.displayAction" attribute="display">
             <forward name="ok" path="/jsp/display/display_test.jsp" />
         </action>
+        <action path="/langue" type="language.action.languageAction" />
     </action-mappings>
     
     <controller processorClass="org.apache.struts.tiles.TilesRequestProcessor"/>

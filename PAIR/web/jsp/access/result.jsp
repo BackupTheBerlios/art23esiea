@@ -12,17 +12,17 @@
     <title>Main page</title>
 </head>    
 <body>
-    <%@include file="./leftMenu.jsp" %>
+    <%@include file="../leftMenu.jsp" %>
     <DIV id="sikfContenu">
     <DIV class="sikfSection">
     <DIV class="sikfSectionContenu">        
 <!-- Début -->
     <div align="right"><bean:message key="access.login" /></div>
     <div class="menuOnglet">
-      <a class="onglet" href="<%=request.getContextPath()%>/jsp/cafeVerde.jsp"><bean:message key="tab.greenCoffee"/></a>
-      <a class="onglet" href="<%=request.getContextPath()%>/jsp/tamano.jsp"><bean:message key="tab.size"/></a>
-      <a class="onglet" href="<%=request.getContextPath()%>/jsp/defectos.jsp"><bean:message key="tab.flaw"/></a>
-      <a class="onglet" href="<%=request.getContextPath()%>/jsp/catacion.jsp"><bean:message key="tab.tasting"/></a>
+      <a class="onglet" href="<%=request.getContextPath()%>/jsp/access/cafeVerde.jsp"><bean:message key="tab.greenCoffee"/></a>
+      <a class="onglet" href="<%=request.getContextPath()%>/jsp/access/tamano.jsp"><bean:message key="tab.size"/></a>
+      <a class="onglet" href="<%=request.getContextPath()%>/jsp/access/defectos.jsp"><bean:message key="tab.flaw"/></a>
+      <a class="onglet" href="<%=request.getContextPath()%>/jsp/access/catacion.jsp"><bean:message key="tab.tasting"/></a>
        <span class="onglet-actif"><bean:message key="tab.testResult"/></span>
     </div>
     <br />

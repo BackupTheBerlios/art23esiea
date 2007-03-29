@@ -1,5 +1,7 @@
 package display.bean;
 
+import java.util.ArrayList;
+
 public class displayBean implements java.io.Serializable {
     
     private String id;
@@ -9,6 +11,8 @@ public class displayBean implements java.io.Serializable {
     private String organization;
     private String typeCoffee;
     private String batch;
+    private ArrayList tab = new ArrayList();
+    
     
     public String getId() {return id;}
     public void setId(String string) {id = string;}
@@ -30,5 +34,10 @@ public class displayBean implements java.io.Serializable {
     
     public String getBatch() {return batch;}
     public void setBatch(String string) {batch = string;}
+
+    public ArrayList getTab () {return tab;}
+    public void setTab (ArrayList array) {tab = array;}
+    public void addTab (tabDetail var) {tab.add(var);}
+    
     
 }

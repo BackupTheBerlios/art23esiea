@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/style.css"  media="screen">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/ongletStyle.css"  media="screen">
     <title><bean:message key="display.pageTitle" /></title>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/JavaScript/calendar.js"></script>
     <script type="text/javascript"> 
     var tab=new Array(  'Segolène la tigresse',
                         'Ségolène Balboa',
@@ -81,7 +82,7 @@
   
     <html:form action="display.do" >
     <fieldset>
-    <div align="right"><a href=""><bean:message key="link.help" /></a></div>
+    <div align="right"><a><bean:message key="link.help" /></a></div>
     <table size="100%">
                 <tr>
                     <td class="sikfLibelle"><bean:message key="displaySelect.id" /></td>
@@ -91,8 +92,8 @@
                     <td  class="sikfLibelle"><bean:message key="displaySelect.product" /></td> 
                     <td class="sikfDonneeAffichage">     
                         <html:select property="product">
-                                <option value="access"><bean:message key="word.coffee" /></option>
-                                <option value="modify"><bean:message key="word.banana" /></option>
+                                <option value="<bean:message key="word.coffee" />"><bean:message key="word.coffee" /></option>
+                                <option value="<bean:message key="word.banana" />"><bean:message key="word.banana" /></option>
                         </html:select>	  
                     </td>
                 </tr>
@@ -128,7 +129,7 @@
                 </tr>
                 <tr>
                     <td class="sikfLibelle"><bean:message key="displaySelect.date" /></td>
-                        <td class="sikfDonneeAffichage"><bean:message key="displaySelect.form" />&nbsp;&nbsp;<input type="button" value="<bean:message key="displaySelect.date" />"/>&nbsp;&nbsp;<bean:message key="displaySelect.to" />&nbsp;&nbsp;<input type="button" value="<bean:message key="displaySelect.date" />"/>
+                        <td class="sikfDonneeAffichage"><bean:message key="displaySelect.form" />&nbsp;&nbsp;<input type="button" value="<bean:message key="displaySelect.date" />" onclick='CL.show();' />&nbsp;&nbsp;<bean:message key="displaySelect.to" />&nbsp;&nbsp;<input type="button" value="<bean:message key="displaySelect.date" />"/>
                         </td>
                 </tr>
     </table>

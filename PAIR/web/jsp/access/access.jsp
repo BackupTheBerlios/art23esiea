@@ -70,7 +70,7 @@
 </script>
 </head>    
 <body>
-    <%@include file="./leftMenu.jsp" %>
+    <%@include file="../leftMenu.jsp" %>
     <DIV id="sikfContenu">
     <DIV class="sikfSection">
     <DIV class="sikfSectionContenu">

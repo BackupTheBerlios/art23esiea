@@ -40,7 +40,6 @@ public class displayForm extends org.apache.struts.action.ActionForm {
     
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
-        
         return errors;
     }
 }
