@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/style.css"  media="screen">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/ongletStyle.css"  media="screen">
     <title><bean:message key="display.pageTitle" /></title>
+
 </head>    
 <body>
     <%@include file="../leftMenu.jsp" %>
@@ -27,7 +28,7 @@
                 </div>
     <br />
         <fieldset>
-            <div align="right"><a href=""><bean:message key="link.help" /></a></div>
+            <div align="right"><a onclick="window.open('help/display_testHelp.jsp',null,'resizable=yes,status=no,toolbar=yes,menubar=no,location=no');"><bean:message key="link.help" /></a></div>
             <table cellspacing="10">
                                    <tr>
                         <td class="sikfLibelle"><bean:message key="displayTest.product" /></td>
@@ -69,9 +70,6 @@
                                     </tr>
             </table>
            <br />          
-           <table>
-               <tr>
-               <td>
                    <table border="1" bordercolor="#336633">
                        <tr>
                            <td class="sikLibelle" ><bean:message key="displayTest.identification" /></td>
@@ -144,12 +142,8 @@
                            
                        </tr>
                        </logic:iterate>
-                   </table>
                </td>
                </tr>
-               <tr>
-                   <td>
-                       <table border="1" bordercolor="#336633">
                            <tr>
                                <td>
                                    <table name="average" align="center">
@@ -213,10 +207,6 @@
                                
                            </tr>       
                        </table>
-                       
-                   </td>
-               </tr>
-           </table>
         </fieldset>
         
          

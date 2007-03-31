@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/style.css"  media="screen">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/ongletStyle.css"  media="screen">
     <title>Tamano</title>
-    
+
 </head>    
 <body>
     <%@include file="../leftMenu.jsp" %>
@@ -33,7 +33,7 @@
     <br />
         <form>
         <fieldset>
-        <div align="right"><a href=""><bean:message key="link.help" /></a></div>
+        <div align="right"><a onclik="window.open('help/defaultHelp.jsp',null,'resizable=yes,status=no,toolbar=yes,menubar=no,location=no');"><bean:message key="link.help" /></a></div>
         <table border="1" bordercolor="#336633">
                 <tr>
                         <td class="sikfDonneeAffichage"><bean:message key="flaw.number"/></td>     

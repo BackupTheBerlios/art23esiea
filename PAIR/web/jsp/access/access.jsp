@@ -66,7 +66,7 @@
     aff.appendChild(el);}
     // sinon, on affiche les correspondances trouvées.
     else aff.style.display='block';
-    }
+    }  
 </script>
 </head>    
 <body>
@@ -81,7 +81,7 @@
   
     <form>
     <fieldset>
-    <div align="right"><a href=""><bean:message key="link.help" /></a></div>        
+    <div align="right"><a onclick="window.open('help/accessHelp.jsp',null,'resizable=yes,status=no,toolbar=yes,menubar=no,location=no');" ><bean:message key="link.help" /></a></div>        
     <table size="100%">
                 <tr>		                
                     <td  class="sikfLibelle"><bean:message key="access.selectProduct" /></td> 

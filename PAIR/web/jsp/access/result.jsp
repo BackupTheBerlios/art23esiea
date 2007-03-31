@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/style.css"  media="screen">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/ongletStyle.css"  media="screen">
     <title>Main page</title>
+    
 </head>    
 <body>
     <%@include file="../leftMenu.jsp" %>
@@ -37,7 +38,7 @@
                 </div>
     <br />
         <fieldset>
-        <div align="right"><a href=""><bean:message key="link.help" /></a></div>
+        <div align="right"><a onclick="window.open('help/resultHelp.jsp',null,'resizable=yes,status=no,toolbar=yes,menubar=no,location=no');"><bean:message key="link.help" /></a></div>
     <br />
 <div class="sikfSectionTitre"><bean:message key="result.greenCoffee" /></div>    
     <br />

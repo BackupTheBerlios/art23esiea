@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/style.css"  media="screen">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/ongletStyle.css"  media="screen">
     <title><bean:message key="display.pageTitle" /></title>
+    
     <script type="text/javascript" src="<%=request.getContextPath()%>/JavaScript/calendar.js"></script>
     <script type="text/javascript"> 
     var tab=new Array(  'Segolène la tigresse',
@@ -82,7 +83,7 @@
   
     <html:form action="display.do" >
     <fieldset>
-    <div align="right"><a><bean:message key="link.help" /></a></div>
+    <div align="right"><a onclick="window.open('help/displayHelp.jsp',null,'resizable=yes,status=no,toolbar=yes,menubar=no,location=no');"><bean:message key="link.help" /></a></div>
     <table size="100%">
                 <tr>
                     <td class="sikfLibelle"><bean:message key="displaySelect.id" /></td>

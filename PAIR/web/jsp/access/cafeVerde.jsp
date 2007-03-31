@@ -43,7 +43,7 @@ var y=document.cafeverdef.humidity.value;
     
         <html:form  action="/cafeVerdeAction">
         <fieldset>
-        <div align="right"><a href=""><bean:message key="link.help" /></a></div>            
+        <div align="right"><a onclick="window.open('help/greenCoffeeHelp.jsp',null,'resizable=yes,status=no,toolbar=yes,menubar=no,location=no');"><bean:message key="link.help" /></a></div>            
         <table cellpadding="10">
                 <tr>
                         <td  class="sikfLibelle"></td>

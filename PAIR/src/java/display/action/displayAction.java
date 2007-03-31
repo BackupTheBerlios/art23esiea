@@ -25,7 +25,6 @@ public class displayAction extends Action {
         detail.setDenseness("denseness");
         detail.setUniformity("uniformity");
         detail.setComment("comment");
-        
         detail.setTestNum("testNum");
         detail.setBigGrain("big");
         detail.setMediumGrain("medium");
