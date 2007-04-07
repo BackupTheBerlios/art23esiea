@@ -1,591 +1,268 @@
-/******************************
-* GnooCalendar 1.4
-* calendrier dynamique en javascript
-* v1 	27/04/2004
-* v1.1	19/09/2004 + drag&drop
-* v1.2	03/10/2004 + bouton de fermeture 
-                   + passage de l'année en paramètre
-                   + passage du mois en paramètre
-* v1.3	25/11/2004 + fermeture automatique à la sélection d'une date
-				   + correction bug lié au positionnement lors du masquage
-* v1.4	09/01/2005 + correction bug scrollbar des listes avec Mozilla
-* Auteur : zegnoo
-* Contact : gleroy@zegnoo.net
-******************************/
-function GnooCalendar(n, min, max, format)
-{
-	this.target= null;
-	this.format = new String("fr");
-	this.name = new String(n);
-	this.tag = new String();
-	this.title =  new String("GnooCalendar");
-	this.date=new Date();
-	this.moving = new Boolean(false);
-	this.vis = new Boolean(false);
-	this.free = new Boolean(false);
-	this.curYear = new Number(this.date.getFullYear());
-	this.maxYear = new Number(this.curYear+max);
-	this.minYear = new Number(this.curYear-min);
-	this.curMonth= new Number(this.date.getMonth());
-/*
-* GnooCalendar.setFormat(String format)
-* format de date : "fr"=français, "us"=englais
-*/
-	this.setFormat=function(f)
-	{
-		this.format=f;
-		return;
-	}
-/*
-* GnooCalendar.setFree(Boolean vis)
-* affiche ou non des jours feries
-*/
-	this.setFree=function(vis)
-	{
-		this.free=vis;
-		if(this.vis==true)
-			this.show();
-		return;
-	}
-/*
-* GnooCalendar.IsDragable(Boolean drag)
-* active/desactive l'option drag&drop 
-*/
-	this.isDragable=function(drag)
-	{
-		if(drag==true && !document.layers)
-		{
-			document.onmousemove=this.getMouse;
-			document.getElementById(this.div).root=this;
-			document.getElementById(this.div).onmousedown=this.startMove;
-			document.getElementById(this.div).onmouseup=this.endMove;
-		}
-		return;
-	}
-/*
-* GnooCalendar.startMove()
-* initialise le drag & drop
-*/
-	this.startMove=function(evt)
-	{
-		var event;
-		var tmp;
-		if(this.root.vis!=true)
-			return;
-		if(document.all)
-		{
-			event = window.event;
-			tmp = event.srcElement;
-			if(!tmp.form)
-			{
-				this.root.fixX = tmp.offsetLeft+event.offsetX;
-				this.root.fixY = event.offsetY;
-				while(tmp.parentElement!=document.getElementById(this.root.div) && tmp.parentElement!=null )
-				{
-					this.root.fixX += tmp.parentElement.offsetLeft;
-					this.root.fixY += tmp.parentElement.offsetTop;
-					tmp = tmp.parentElement;
-				}
-				this.root.moving=true;
-				self.movingCalendar = this.root;
-				return false;
-			}
-		}
-		else
-		{
-			event = evt;
-			tmp = event.target;
-			if( !tmp.form && tmp.tagName!="SELECT" && tmp.tagName!="OPTION" && tmp.tagName!="scrollbar" )
-			{			
-				this.root.fixX = event.layerX;
-				this.root.fixY = event.layerY;
-				this.root.moving=true;
-				self.movingCalendar = this.root;
-				return false;
-			}
-		}
-		return evt;
-	}
-/*
-* GnooCalendar.endMove()
-* termine le drag & drop
-*/
-	this.endMove=function()
-	{
-		if(self.movingCalendar!=null)
-		{
-			self.movingCalendar.moving=false;
-		}
-		return false;
-	}
-/*
-* GnooCalendar.getMouse(Event evt)
-* change la liste des jours feriés jours feries
-*/
-	this.getMouse=function(evt)
-	{
-		
-		var event;
-		if(document.all)
-		{
-			event = window.event;
-			var scrollObj = (document.documentElement) ? document.documentElement : document.body;
-			this.posX = self.event.clientX+scrollObj.scrollLeft;
-			this.posY = self.event.clientY+scrollObj.scrollTop;
-		}
-		else
-		{
-			event = evt;
-			this.posX = evt.pageX ;
-			this.posY = evt.pageY ;
-		}
-		if(self.movingCalendar!=null)
-		{
-			if(self.movingCalendar.moving==true && self.movingCalendar.vis==true )
-				self.movingCalendar.move(this.posY-self.movingCalendar.fixY, this.posX-self.movingCalendar.fixX);
-		}
-		return false;
-	}
-/*
-* GnooCalendar.move(Number x, Number y)
-* déplace le calendrier
-*/
-	this.move=function(x, y)
-	{
-		if(!document.layers)
-		{
-			document.getElementById(this.div).style.top = x+"px";
-			document.getElementById(this.div).style.left = y+"px";
-		}
-		return false;
-	}
+// Set the initial date.
+var ds_i_date = new Date();
+ds_c_month = ds_i_date.getMonth() + 1;
+ds_c_year = ds_i_date.getFullYear();
+// Output Element
+var ds_oe = ds_getel('ds_calclass');
+// Container
+var ds_ce = ds_getel('ds_conclass');
+// Output Buffering
+var ds_ob = ''; 
 
-/*
-* GnooCalendar.setFreeDay(Array fd)
-* change la liste des jours feriés jours feries
-*/
-	this.setFreeDay=function(fd)
-	{
-		this.freeday.length=0;
-		for(var i=0; i<fd.length; i++)
-			this.freeday[i] = new String(fd[i]);
-		if(this.vis==true)
-			this.show();
-		return;
-	}
-/*
-* GnooCalendar.isFreeDay(d,m)
-* true si jour ferié
-*/
-	this.isFreeDay=function(d,m)
-	{
-		var tmp = this.checkDate(d)+"/"+this.checkDate(parseInt(m)+1);
-		if(this.free==false)
-			return false;
-		for(var i=0; i<this.freeday.length; i++)
-			if( tmp == this.freeday[i])
-				return true;
-		return false;
-	}
-/*
-* GnooCalendar.setTitle(t)
-* change le titre du calendrier
-*/
-	this.setTitle=function(t)
-	{
-		this.title = t;
-		if(this.vis==true)
-			this.show();
-		return;
-	}
-/*
-* GnooCalendar.mList()
-* retourne la liste des mois 
-*/
-	this.mList=function()
-	{
-		var tmp = "<table border='0' cellpadding='0' cellspacing='0' class='Gtab'>";
-	
-		tmp += "<tr><td align='center' colspan='2' class='Gname'>";
-		if(document.layers)
-		{
-			tmp += "<table width='100%'>";
-			tmp += "<tr>";
-			tmp += "<td class='Gname' align='center'>"+this.title+"</td>";
-			tmp += "<td><a href='javascript://' onclick='"+this.name+".hide();' class='Gname'>X</a></td>";
-			tmp += "</tr>";
-			tmp += "</table>";
-		}
-		else
-		{
-			tmp += "<span style='float:left; text-indent:20px;'>"+this.title+"</span>";
-			tmp += "<span style='float:right;'>";
-			tmp += "<a href='javascript://' onclick='"+this.name+".hide();' class='Gname'>X</a>";
-			tmp += "</span>";
-		}
-		tmp += "</td></tr>";
-		tmp += "<tr>";
-		tmp += "<td class='Gtxt'><select name='"+this.name+"month' class='Gtxt' ";
-		tmp += "onchange='"+this.name+".setMonth(this[this.selectedIndex].value)' >\n";
-		for(var i=0; i<this.month.length; i++)
-		{			
-			tmp += "<option value='"+i+"'";
-			if(this.curMonth==i)
-				tmp += " selected";
-			tmp += ">"+ this.month[i] +"</option>\n";
-		}
-		tmp += "</select></td><td class='Gtxt'>\n";
-		tmp += this.yList();
-		tmp += "</td></tr></table>";
-		tmp += this.dList();
-		return tmp;
-	}
-/*
-* GnooCalendar.yList()
-* retourne la liste des années 
-*/
-	this.yList=function()
-	{
-		var tmp = "<select name='"+this.name+"year' class='Gtxt' ";
-		tmp += "onchange='"+this.name+".setYear(this[this.selectedIndex].value);' >\n";
-		for(var i=this.minYear; i<=this.maxYear; i+=1)
-		{
-			tmp += "<option value='"+i+"'";
-			if(this.curYear==i)
-				tmp += " selected";
-			tmp += ">"+ i +"</option>\n";
-		}
-		tmp += "</select>\n";
-		return tmp;
-	}
-
-	this.dayCell=function(d,n)
-	{
-		var tmp = new String("");
-		var now = new Date();
-		if(this.isFreeDay(d,this.curMonth))
-		{
-			tmp += "<td class='Gfree'";
-		}
-		else if (this.checkDate(d)==now.getDate() 
-				&& this.curMonth==now.getMonth()
-				&& this.curYear==now.getFullYear()) 
-		{
-			tmp += "<td class='Gc'";
-		}
-		else
-		{
-			tmp += "<td class='Gc"+n+"'";
-		}
-		if(!document.layers)
-		{
-			tmp += "title='"+this.checkDate(d)+" "+this.month[this.curMonth]+" "+this.curYear+"'";
-			tmp += " onmousedown='"+this.name+".getDate(\"";
-			tmp += this.formatDate(d);
-			tmp += "\");' ";
-			tmp += " onmouseover='this.className=this.className+\"on\";' ";
-			tmp += " onmouseout='this.className= this.className.substring(0,this.className.indexOf(\"on\"));'";
-		}
-		else
-			tmp += " width='22' height='16' ";
-		tmp += ">";
-		return tmp;
-	}
-/*
-* GnooCalendar.dList()
-* retourne le tableau des jours
-*/
-	this.dList=function()
-	{
-		var cur=new Number(1);
-		var tmpDate = new Date();
-		var tmp = new String("<table border='0' cellpadding='0' cellspacing='0' class='Gtab'>");
-		tmpDate.setDate(cur);
-		tmpDate.setMonth(this.curMonth);
-		tmpDate.setFullYear(this.curYear);
-		tmp += "<tr>\n";
-		for(var i=1; i<this.day.length; i++)
-			tmp += "<td class='Gh"+i+"'>"+ this.day[i] +"</td>\n";
-		tmp += "<td class='Gh0'>"+ this.day[0] +"</td>\n";
-		tmp += "</tr>\n";
-		for(var j=0; j<6; j++)
-		{
-			tmp += "<tr>\n";
-			for(var i=1; i<this.day.length; i++)
-			{
-				tmpDate.setDate(cur);			
-				if( cur<=31 && i==tmpDate.getDay() && this.curMonth==tmpDate.getMonth())
-				{
-					tmp += this.dayCell(cur,i);
-					tmp += this.getLink(cur);
-					cur+=1;
-				}
-				else
-				{
-					tmp += "<td class='Gc"+i+"'";
-					tmp += ">&nbsp;";
-				}
-				tmp += "</td>\n";
-				tmpDate.setDate(cur);
-			}
-			if( cur==tmpDate.getDate() && this.curMonth==tmpDate.getMonth())
-			{
-				tmp += this.dayCell(cur,0);
-				tmp += this.getLink(cur);
-				cur+=1;
-			}
-			else
-			{
-				tmp += "<td class='Gc0'";
-				tmp += ">&nbsp;";
-			}
-			tmp += "</td>\n</tr>\n";
-		}
-		tmp += "</table>\n";
-		return tmp;
-	}
-/*
-* GnooCalendar.getLink(c)
-* retourne la balise d'un lien
-*/
-	this.getLink = function(c)
-	{
-		var tmp = new String("");
-		if(document.layers)
-		{
-			tmp = "<a href='javascript://' ";
-			tmp += "onclick='"+this.name+".getDate(\"";
-			tmp += this.formatDate(c);
-			tmp += "\");' class='NSday'>"+(c)+"</a>";
-		}
-		else
-		{
-			tmp = (c);
-		}
-		return tmp;
-	}
-/*
-* GnooCalendar.setMonth( Integer m )
-* modifie le mois à afficher
-*/
-	this.setMonth = function(m)
-	{
-		this.curMonth = m;
-		this.show();
-		return;
-	}
-/*
-* GnooCalendar.getYear( Integer y )
-* modifie l'année à afficher
-*/
-	this.getYear = function (y)
-	{
-		if(document.layers)
-		{
-			for(var i=0; i<document.layers[this.div].document.forms[this.name+"_form"][this.name+"year"].length; i++)
-			{
-				if(document.layers[this.div].document.forms[this.name+"_form"][this.name+"year"][i].value==y)
-				{
-					document.layers[this.div].document.forms[this.name+"_form"][this.name+"year"].selectedIndex=i;
-					this.setYear(y);
-					return;
-				}
-			}
-		}
-		else
-		{
-			for(var i=0; i<document.forms[this.name+"_form"].elements[this.name+"year"].length; i++)
-			{
-				if(document.forms[this.name+"_form"].elements[this.name+"year"][i].value==y)
-				{
-					document.forms[this.name+"_form"].elements[this.name+"year"].selectedIndex=i;
-					this.setYear(y);
-					return;
-				}
-			}
-		}
-		return;
-	}
-/*
-* GnooCalendar.getMonth( Integer m )
-* modifie le mois à afficher
-*/
-	this.getMonth = function (d)
-	{
-		if(document.layers)
-		{
-			for(var i=0; i<document.layers[this.div].document.forms[this.name+"_form"][this.name+"month"].length; i++)
-			{
-				if(document.layers[this.div].document.forms[this.name+"_form"][this.name+"month"][i].value==d)
-				{
-					document.layers[this.div].document.forms[this.name+"_form"][this.name+"month"].selectedIndex=i;
-					this.setMonth(d);
-					return;
-				}
-			}
-		}
-		else
-		{
-			for(var i=0; i<document.forms[this.name+"_form"].elements[this.name+"month"].length; i++)
-			{
-				if(document.forms[this.name+"_form"].elements[this.name+"month"][i].value==d)
-				{
-					document.forms[this.name+"_form"].elements[this.name+"month"].selectedIndex=i;
-					this.setMonth(d);
-					return;
-				}
-			}
-		}
-		return;
-	}
-/*
-* GnooCalendar.setYear( Integer y )
-* modifie l'année à afficher
-*/
-	this.setYear = function (y)
-	{
-		this.curYear = y;
-		this.show();
-		return;
-	}
-/*
-* GnooCalendar.setTarget( Object obj )
-* change le champs cible d'affichage de la date
-* BUG OPERA!
-*/
-	this.setTarget = function (obj)
-	{
-		this.target = obj;
-		return;
-	}
-/*
-* GnooCalendar.hide()
-* masque le calendrier
-*/
-	this.hide = function()
-	{
-		if(document.layers)
-			document.layers[this.div].visibility='hide';
-		else
-		{
-			document.getElementById(this.div).style.visibility = 'hidden';
-			document.getElementById(this.div).style.display = 'none';
-		}
-		this.vis = false;
-		this.endMove();
-		return;
-	}
-
-/*
-* GnooCalendar.getDate()
-* retourne la date selectionnée dans le champs cible
-*/
-	this.getDate = function(d)
-	{
-		if(this.target!=null)
-		{
-			this.target.value=d;	
-			this.hide();
-		}
-		return;
-	}
-
-/*
-* GnooCalendar.show()
-* affiche le calendrier
-*/
-	this.show = function()
-	{
-		this.vis = true;
-		this.tag = "<form name='"+this.name+"_form' method='post'>\n";
-		this.tag += this.mList();
-		this.tag += "</form>\n";
-		if(document.layers)
-		{
-			with(document.layers[this.div])
-			{				
-				document.open("text/html");
-				document.write(this.tag);
-				document.close();
-				visibility='show';
-			}
-		}
-		else
-		{
-			document.getElementById(this.div).innerHTML = ""+this.tag;
-			document.getElementById(this.div).style.visibility = 'visible';
-			document.getElementById(this.div).style.display = 'block';
-		}
-		return;
-	}
-/*
-* GnooCalendar.init( String d )
-* initialise le Calendrier à la date actuelle
-* paramêtres : 
-* d : nom du calque d'affichage
-* obj : objet dont la propriété value va recevoir le String de la date
-*/
-	this.init = function(d, obj)
-	{
-		this.div=d;
-		this.target = obj;
-		this.date=new Date();
-		this.date.setDate(1);		
-		this.curMonth = this.date.getMonth();
-		this.curYear = this.date.getFullYear();
-		if(!self.movingCalendar)
-			self.movingCalendar=null;
-		return;
-	}
-/*
-* GnooCalendar.checkDate( Integer d )
-* paramêtre : le jour d'une date
-*/
-	this.checkDate = function(d)
-	{
-		if(parseInt(d)<=9)
-			return "0"+parseInt(d);
-		return parseInt(d);
-	}
-/*
-* GnooCalendar.formatDate( Integer d, Integer m, Integer y )
-* paramêtre : le jour d'une date
-*/
-	this.formatDate = function(c)
-	{
-		var tmp = "";
-		switch(this.format)
-		{
-			case "us":	// englais	
-				tmp = this.curYear+"-";
-				tmp += this.checkDate(1+parseInt(this.curMonth))+"-";
-				tmp += this.checkDate(c);
-				break;
-			default: 	// français
-				tmp = this.checkDate(c)+"/";
-				tmp += this.checkDate(1+parseInt(this.curMonth))+"/";
-				tmp += this.curYear;
-				break;
-		}
-		return tmp;
-
-	}
-	return this;
+// Get Element By Id
+function ds_getel(id) {
+	return document.getElementById(id);
 }
-/******************************/
-GnooCalendar.prototype.day = ["D", "L", "M", "M", "J", "V", "S" ];
-GnooCalendar.prototype.month = ["Janvier", 
-				"F&eacute;vrier", 
-				"Mars", 
-				"Avril", 
-				"Mai", 
-				"Juin", 
-				"Juillet", 
-				"Ao&ucirc;t", 
-				"Septembre", 
-				"Octobre", 
-				"Novembre", 
-				"D&eacute;cembre"];
-/* jours feriés français */
-GnooCalendar.prototype.freeday= ["01/01","01/05","08/05","14/07","15/08","01/11","11/11","25/12"];
-/******************************/
+
+// Get the left and the top of the element.
+function ds_getleft(el) {
+	var tmp = el.offsetLeft;
+	el = el.offsetParent
+	while(el) {
+		tmp += el.offsetLeft;
+		el = el.offsetParent;
+	}
+	return tmp;
+}
+function ds_gettop(el) {
+	var tmp = el.offsetTop;
+	el = el.offsetParent
+	while(el) {
+		tmp += el.offsetTop;
+		el = el.offsetParent;
+	}
+	return tmp;
+}
+
+// Output Element
+//var ds_oe = ds_getel('ds_calclass');
+// Container
+//var ds_ce = ds_getel('ds_conclass');
+
+// Output Buffering
+//var ds_ob = ''; 
+function ds_ob_clean() {
+	ds_ob = '';
+}
+function ds_ob_flush() {
+	ds_oe.innerHTML = ds_ob;
+	ds_ob_clean();
+}
+function ds_echo(t) {
+	ds_ob += t;
+}
+
+var ds_element; // Text Element...
+
+var ds_monthnames = [
+'Enero', 'Febrero', 'Marzo', 'April', 'Mayo', 'Junio',
+'Julio', 'Agosto', 'Septiembre', 'Octobre', 'Noviembre', 'Deciembre'
+]; // You can translate it for your language.
+
+var ds_daynames = [
+'Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'
+]; // You can translate it for your language.
+
+// Calendar template
+function ds_template_main_above(t) {
+	return '<table cellpadding="3" cellspacing="1" class="ds_tbl">'
+	     + '<tr>'
+		 + '<td class="ds_head" style="cursor: pointer" onclick="ds_py();">&lt;&lt;</td>'
+		 + '<td class="ds_head" style="cursor: pointer" onclick="ds_pm();">&lt;</td>'
+		 + '<td class="ds_head" style="cursor: pointer" onclick="ds_hi();" colspan="3">[Fermer]</td>'
+		 + '<td class="ds_head" style="cursor: pointer" onclick="ds_nm();">&gt;</td>'
+		 + '<td class="ds_head" style="cursor: pointer" onclick="ds_ny();">&gt;&gt;</td>'
+		 + '</tr>'
+	     + '<tr>'
+		 + '<td colspan="7" class="ds_head">' + t + '</td>'
+		 + '</tr>'
+		 + '<tr>';
+}
+
+function ds_template_day_row(t) {
+	return '<td class="ds_subhead">' + t + '</td>';
+	// Define width in CSS, XHTML 1.0 Strict doesn't have width property for it.
+}
+
+function ds_template_new_week() {
+	return '</tr><tr>';
+}
+
+function ds_template_blank_cell(colspan) {
+	return '<td colspan="' + colspan + '"></td>'
+}
+
+function ds_template_day(d, m, y) {
+	return '<td class="ds_cell" onclick="ds_onclick(' + d + ',' + m + ',' + y + ')">' + d + '</td>';
+	// Define width the day row.
+}
+
+function ds_template_main_below() {
+	return '</tr>'
+	     + '</table>';
+}
+
+// This one draws calendar...
+function ds_draw_calendar(m, y) {
+	// First clean the output buffer.
+	ds_ob_clean();
+	// Here we go, do the header
+	ds_echo (ds_template_main_above(ds_monthnames[m - 1] + ' ' + y));
+	for (i = 0; i < 7; i ++) {
+		ds_echo (ds_template_day_row(ds_daynames[i]));
+	}
+	// Make a date object.
+	var ds_dc_date = new Date();
+	ds_dc_date.setMonth(m - 1);
+	ds_dc_date.setFullYear(y);
+	ds_dc_date.setDate(1);
+	if (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) {
+		days = 31;
+	} else if (m == 4 || m == 6 || m == 9 || m == 11) {
+		days = 30;
+	} else {
+		days = (y % 4 == 0) ? 29 : 28;
+	}
+	var first_day = ds_dc_date.getDay();
+	var first_loop = 1;
+	// Start the first week
+	ds_echo (ds_template_new_week());
+	// If sunday is not the first day of the month, make a blank cell...
+	if (first_day != 0) {
+		ds_echo (ds_template_blank_cell(first_day));
+	}
+	var j = first_day;
+	for (i = 0; i < days; i ++) {
+		// Today is sunday, make a new week.
+		// If this sunday is the first day of the month,
+		// we've made a new row for you already.
+		if (j == 0 && !first_loop) {
+			// New week!!
+			ds_echo (ds_template_new_week());
+		}
+		// Make a row of that day!
+		ds_echo (ds_template_day(i + 1, m, y));
+		// This is not first loop anymore...
+		first_loop = 0;
+		// What is the next day?
+		j ++;
+		j %= 7;
+	}
+	// Do the footer
+	ds_echo (ds_template_main_below());
+	// And let's display..
+	ds_ob_flush();
+	// Scroll it into view.
+	ds_ce.scrollIntoView();
+}
+
+// A function to show the calendar.
+// When user click on the date, it will set the content of t.
+function ds_sh(t) {
+	// Set the element to set...
+	ds_element = t;
+	// Make a new date, and set the current month and year.
+	var ds_sh_date = new Date();
+	ds_c_month = ds_sh_date.getMonth() + 1;
+	ds_c_year = ds_sh_date.getFullYear();
+	// Draw the calendar
+	ds_draw_calendar(ds_c_month, ds_c_year);
+	// To change the position properly, we must show it first.
+	ds_ce.style.display = '';
+	// Move the calendar container!
+	the_left = ds_getleft(t);
+	the_top = ds_gettop(t) + t.offsetHeight;
+	ds_ce.style.left = the_left -aLeft + 'px';
+	ds_ce.style.top = the_top -aTop + 'px';
+	// Scroll it into view.
+	ds_ce.scrollIntoView();
+}
+
+// Hide the calendar.
+function ds_hi() {
+	ds_ce.style.display = 'none';
+}
+
+// Moves to the next month...
+function ds_nm() {
+	// Increase the current month.
+	ds_c_month ++;
+	// We have passed December, let's go to the next year.
+	// Increase the current year, and set the current month to January.
+	if (ds_c_month > 12) {
+		ds_c_month = 1; 
+		ds_c_year++;
+	}
+	// Redraw the calendar.
+	ds_draw_calendar(ds_c_month, ds_c_year);
+}
+
+// Moves to the previous month...
+function ds_pm() {
+	ds_c_month = ds_c_month - 1; // Can't use dash-dash here, it will make the page invalid.
+	// We have passed January, let's go back to the previous year.
+	// Decrease the current year, and set the current month to December.
+	if (ds_c_month < 1) {
+		ds_c_month = 12; 
+		ds_c_year = ds_c_year - 1; // Can't use dash-dash here, it will make the page invalid.
+	}
+	// Redraw the calendar.
+	ds_draw_calendar(ds_c_month, ds_c_year);
+}
+
+// Moves to the next year...
+function ds_ny() {
+	// Increase the current year.
+	ds_c_year++;
+	// Redraw the calendar.
+	ds_draw_calendar(ds_c_month, ds_c_year);
+}
+
+// Moves to the previous year...
+function ds_py() {
+	// Decrease the current year.
+	ds_c_year = ds_c_year - 1; // Can't use dash-dash here, it will make the page invalid.
+	// Redraw the calendar.
+	ds_draw_calendar(ds_c_month, ds_c_year);
+}
+
+// Format the date to output.
+function ds_format_date(d, m, y) {
+	// 2 digits month.
+	m2 = '00' + m;
+	m2 = m2.substr(m2.length - 2);
+	// 2 digits day.
+	d2 = '00' + d;
+	d2 = d2.substr(d2.length - 2);
+	// YYYY-MM-DD
+//	return y + '-' + m2 + '-' + d2;
+	return d2 + '-' + m2 + '-' + y;
+}
+
+// When the user clicks the day.
+function ds_onclick(d, m, y) {
+	// Hide the calendar.
+	ds_hi();
+	// Set the value of it, if we can.
+	if (typeof(ds_element.value) != 'undefined') {
+		ds_element.value = ds_format_date(d, m, y);
+	// Maybe we want to set the HTML in it.
+	} else if (typeof(ds_element.innerHTML) != 'undefined') {
+		ds_element.innerHTML = ds_format_date(d, m, y);
+	// I don't know how should we display it, just alert it to user.
+	} else {
+		alert (ds_format_date(d, m, y));
+	}
+}
+
+// And here is the end.
+
+function clearFecha(a) {
+alert('todo');
+//a.value='';
+
+}
+
+
+
+
